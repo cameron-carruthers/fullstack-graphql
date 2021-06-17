@@ -10,6 +10,9 @@ module.exports = {
     },
     pet(_, {input}, {models}) {
       return models.Pet.findOne(input);
+    },
+    user(_, __, {models}) {
+      return models.User.findOne({});
     }
   },
   Mutation: {
@@ -24,7 +27,14 @@ module.exports = {
   //       : 'http://placekitten.com/300/300'
   //   }
   // },
-  // User: {
-    
-  // }
+  Pet: {
+    owner(pet, _, {models}) {
+      return models.User.findOne();
+    }
+  },
+  User: {
+    pets(user, _, {models}) {
+      return models.Pet.findMany();
+    }
+  }
 }
