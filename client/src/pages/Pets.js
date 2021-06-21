@@ -5,8 +5,8 @@ import NewPet from '../components/NewPet'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import Loader from '../components/Loader'
 
-const ALL_PETS = gql`
-  query AllPets {
+const GET_PETS = gql`
+  query GetPets {
     pets {
       id
       name
@@ -17,8 +17,8 @@ const ALL_PETS = gql`
 `
 
 const CREATE_PET = gql`
-  mutation CreateAPet($newPet: NewPetInput!) {
-    pet(input: $newPet) {
+  mutation CreatePet($newPet: NewPetInput!) {
+    addPet(input: $newPet) {
       id
       name
       type
@@ -28,8 +28,16 @@ const CREATE_PET = gql`
 
 export default function Pets () {
   const [modal, setModal] = useState(false)
-  const { data, loading, error } = useQuery(ALL_PETS)
-  const [createPet, { data: d, loading: l, error: e}] = useMutation(CREATE_PET)
+  const { data, loading, error } = useQuery(GET_PETS)
+  const [createPet, { data: d, loading: l, error: e}] = useMutation(CREATE_PET, {
+    update(cache, { data: { addPet }}) {
+      const { pets } = cache.readQuery({ query: GET_PETS })
+      cache.writeQuery({
+        query: GET_PETS,
+        data: { pets: pets.concat([addPet]) }
+      });
+    }
+  })
   
   const onSubmit = input => {
     setModal(false)
