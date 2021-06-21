@@ -33,6 +33,12 @@
       "createdAt": 1623170272938,
       "name": "Sneaks",
       "type": "HYENA"
+    },
+    {
+      "id": "UdWqS69aigy9fRcFE2eH2",
+      "createdAt": 1623974628914,
+      "name": "Milo",
+      "type": "DOG"
     }
   ]
 }

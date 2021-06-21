@@ -5,20 +5,54 @@ import NewPet from '../components/NewPet'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import Loader from '../components/Loader'
 
+const ALL_PETS = gql`
+  query AllPets {
+    pets {
+      id
+      name
+      type
+      img
+    }
+  }
+`
+
+const CREATE_PET = gql`
+  mutation CreateAPet($newPet: NewPetInput!) {
+    pet(input: $newPet) {
+      id
+      name
+      type
+    }
+  }
+`
+
 export default function Pets () {
   const [modal, setModal] = useState(false)
+  const { data, loading, error } = useQuery(ALL_PETS)
+  const [createPet, { data: d, loading: l, error: e}] = useMutation(CREATE_PET)
   
   const onSubmit = input => {
     setModal(false)
+    createPet({
+      variables: {newPet: input}
+    })
   }
 
-  const petsList = pets.data.pets.map(pet => (
+  const petsList = data.pets.map(pet => (
     <div className="col-xs-12 col-md-4 col" key={pet.id}>
       <div className="box">
         <PetBox pet={pet} />
       </div>
     </div>
   ))
+
+  if (error || e) {
+    return <p>An error has been detected!</p>
+  }
+
+  if (loading || l) {
+    return <Loader />
+  }
   
   if (modal) {
     return (
